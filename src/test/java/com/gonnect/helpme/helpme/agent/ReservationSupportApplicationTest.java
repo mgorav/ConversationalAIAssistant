@@ -23,7 +23,7 @@ class ReservationSupportApplicationTest {
         // higher chances of GPT-3.5-turbo accidentally specifying false personal
         // details not found in the source data.
 
-        converse(agent, "Hi, I forgot when my booking is.");
+        converse(agent, "Hi, I forgot when my reservation is.");
         converse(agent, "987-654");
         converse(agent, "I'm sorry I'm so distracted today. Gaurav Malhotra.");
         converse(agent, "My bad, it's 987-654");
