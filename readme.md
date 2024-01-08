@@ -65,8 +65,6 @@ graph TB;
     B --> E[Memory];
     B --> F[Retrievers];
     
-    classDef grey fill:#ddd,stroke:#333,stroke-width:4px;
-    class B grey; 
 ```
 
 - **Agent Interface** - Defines capabilities like chat()
