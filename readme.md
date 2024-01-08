@@ -21,25 +21,25 @@ Enable customers to intuitively:
 
 Without needing a human agent.
 
-## [Further Research](Further_Research.md)
-While usable for basic queries, improvements in several areas could enable more advanced functionality:
-
-### Embeddings
-
-Employing learned semantic models over raw text for better understanding.
-
-### Dialog Management
-
-Managing long, complex conversations with state tracking.
-
-### Personalization
-
-Incorporating user preferences and history for suggestions.
-
-### Trust and Safety
-
-Protecting sensitive customer information.
-
+> ## [Further Research](Further_Research.md)
+> While usable for basic queries, improvements in several areas could enable more advanced functionality:
+>
+> ### Embeddings
+>
+> Employing learned semantic models over raw text for better understanding.
+> 
+> ### Dialog Management
+> 
+> Managing long, complex conversations with state tracking.
+> 
+> ### Personalization
+> 
+> Incorporating user preferences and history for suggestions.
+> 
+> ### Trust and Safety
+> 
+> Protecting sensitive customer information.
+>
 
 ## How
 
