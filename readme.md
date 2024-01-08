@@ -16,7 +16,7 @@ Built using:
 Enable customers to intuitively:
 
 - Lookup reservations
-- Reschedule/cancel bookings
+- Reschedule/cancel reservations
 - Get questions answered
 
 Without needing a human agent.
@@ -163,7 +163,7 @@ All automated by `EmbeddingStoreIngestor`.
 
 **ReservationToolService**
 
-Implements use cases like booking lookup and cancellation using a mock repository.
+Implements use cases like reservation lookup and cancellation using a mock repository.
 
 @Tool annotations expose methods directly to agent.
 
@@ -188,7 +188,7 @@ sequenceDiagram
 
     Controller -> Agent: chat()
 
-    Agent -> Tools: Lookup booking
+    Agent -> Tools: Lookup reservation
     Tools --> Agent: Reservation
 
     Agent -> Memory: Update dialog state
@@ -259,7 +259,7 @@ sequenceDiagram
     participant ReservationToolService
     participant ReservationRepository
 
-    ReservationSupportApplicationTest->>+ReservationSupportAgent: Hi, I forgot when <br>my booking is.
+    ReservationSupportApplicationTest->>+ReservationSupportAgent: Hi, I forgot when <br>my reservation is.
     ReservationSupportAgent->>+ReservationToolService: Get reservation details
     ReservationToolService->>+ReservationRepository: Lookup
     ReservationRepository-->>-ReservationToolService: Reservation
