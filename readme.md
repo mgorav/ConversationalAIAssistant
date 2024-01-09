@@ -2,7 +2,7 @@
 
 ## What
 
-An AI-powered conversational agent for handling customer inquiries for a fictional car rental company "Miles of Connect".
+An AI-powered conversational agent for handling customer inquiries for a fictional car rental company "Miles of Gonnect".
 
 Built using:
 
@@ -233,18 +233,112 @@ Handles configuring core framework:
 
 Registers agent beans, services.
 
-### Embedding Store
+Here is the content copied line by line with a mermaid diagram added:
 
-In-memory vector store for quickly retrieving relevant information to answer questions.
+## Embedding Store Initialization
 
-Automated ingestion pipeline:
+The embedding store allows quickly matching user questions to relevant passages of text to provide answers. This requires ingesting documents that contain information to power the conversational assistant.
 
-1. Load unstructured documents
-2. Split into segments
-3. Generate vector embeddings
-4. Index vectors for search
+For the demo application, the [gonnect-miles-terms-and-condition.txt](https://github.com/mgorav/ConversationalAIAssistant/blob/main/src/main/resources/gonnect-miles-terms-and-condition.txt) document is used as the data source. This contains fictional rental policies and conditions for the Miles of Gonnect company.
 
-Controlled by `EmbeddingStoreIngestor`.
+### Document Ingestion
+
+The ingestion pipeline is handled by the `EmbeddingStoreIngestor` which:
+
+1. Loads the raw text document
+2. Splits it into small segments
+3. Generates vector embeddings for each segment
+4. Indexes the embeddings in the store
+
+This allows segmenting large documents into small units to match against later.
+
+The ingestion configuration is set up in [ReservationHelpMeApplicationConfigurer](https://github.com/mgorav/ConversationalAIAssistant/blob/main/src/main/java/com/gonnect/helpme/config/ReservationHelpMeApplicationConfigurer.java):
+
+```java
+// Load Gonnect terms and conditions  
+Resource resource = resourceLoader.getResource("classpath:gonnect-miles-terms-and-condition.txt");
+Document document = loadDocument(resource.getFile().toPath(), new TextDocumentParser());
+
+// Segment using OpenAI tokenizer
+DocumentSplitter splitter = DocumentSplitters.recursive(100, 0, new OpenAiTokenizer(GPT_3_5_TURBO));  
+
+// Generate embeddings   
+EmbeddingModel model = new AllMiniLmL6V2EmbeddingModel();
+
+// Populate in-memory store 
+EmbeddingStore<TextSegment> store = new InMemoryEmbeddingStore<>();  
+
+EmbeddingStoreIngestor ingestor = EmbeddingStoreIngestor.builder()
+    .documentSplitter(splitter)
+    .embeddingModel(model)
+    .embeddingStore(store)
+    .build();  
+
+ingestor.ingest(document);  
+```
+
+So on startup, the terms and conditions are automatically indexed in an in-memory vector store for fast retrieval later.
+
+The **AllMiniLmL6V2EmbeddingModel** is an embedding model in LangChain that is used to generate vector representations of text.
+
+Some key details:
+
+- It is powered by Anthropic's MiniLM-L6 model, which is a compact but high performance language model
+- The v2 version has 6 layers making it quite capable for understanding language
+- It generates 768 dimensional embedding vectors encoding the semantic meaning of text
+- The vectors allow comparing text segments by cosine similarity to find relevant matches
+- It is trained on a variety of data allowing broad understanding
+
+Using AllMiniLmL6V2EmbeddingModel provides the following benefits:
+
+- Compact size enables fast inference for text embedding
+- Rich embeddings capture semantics for relevance matching
+- Similarity search allows finding related information
+- Domain agnostic representations by training on diverse data
+- Easy to use out of the box in LangChain framework
+
+In this application, AllMiniLmL6V2EmbeddingModel is used to:
+
+1. Embed document segments during indexing
+2. Generate question embeddings at query time
+3. Measure similarity between them for retrieval
+
+This enables matching questions to relevant passages using learned vector representations rather than just raw text.
+
+The shared embedding space allows identifying information the language model is likely to understand to power the conversational assistant.
+
+### Vector Search
+
+Now when a user asks a question, the question text is converted into an embedding vector using the same model.
+
+This vector representation of the question is used to semantically search over the indexed segments from the terms and conditions document.
+
+The closest matching segments are returned by the `EmbeddingStoreRetriever` as relevant information to answer the user's question.
+
+So the vector similarity search allows quickly finding passages of text relevant to the user's query for the conversational assistant to respond.
+
+```mermaid
+sequenceDiagram
+    participant User
+    participant Agent
+    participant Index
+    participant Store
+    
+    User->>Agent: Asks question
+    activate Agent
+    Agent->>Index: Converts question <br> to embedding vector
+    activate Index
+    Index-->>Agent: Vector
+    deactivate Index
+    
+    Agent->>Store: Searches vector <br> over indexed segments
+    activate Store
+    Store-->>Agent: Returns closest matches
+    deactivate Store
+    
+    Agent-->User: Responds with matched information
+```
+
 
 ### Business Logic
 
