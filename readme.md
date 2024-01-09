@@ -283,7 +283,7 @@ The **AllMiniLmL6V2EmbeddingModel** is an embedding model in LangChain that is u
 
 Some key details:
 
-- It is powered by Anthropic's MiniLM-L6 model, which is a compact but high performance language model
+- It is powered by MiniLM-L6 model, which is a compact but high performance language model
 - The v2 version has 6 layers making it quite capable for understanding language
 - It generates 768 dimensional embedding vectors encoding the semantic meaning of text
 - The vectors allow comparing text segments by cosine similarity to find relevant matches
