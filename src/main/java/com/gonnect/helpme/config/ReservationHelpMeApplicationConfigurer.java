@@ -1,7 +1,7 @@
-package com.gonnect.helpme.helpme.config;
+package com.gonnect.helpme.config;
 
-import com.gonnect.helpme.helpme.agent.ReservationSupportAgent;
-import com.gonnect.helpme.helpme.service.ReservationToolService;
+import com.gonnect.helpme.agent.ReservationSupportAgent;
+import com.gonnect.helpme.service.ReservationToolService;
 import dev.langchain4j.data.document.Document;
 import dev.langchain4j.data.document.DocumentSplitter;
 import dev.langchain4j.data.document.parser.TextDocumentParser;
@@ -38,8 +38,8 @@ public class ReservationHelpMeApplicationConfigurer {
 
     @Bean
     ReservationSupportAgent reservationSupportAgent(ChatLanguageModel chatLanguageModel,
-                                                 ReservationToolService reservationToolService,
-                                                 Retriever<TextSegment> retriever) {
+                                                    ReservationToolService reservationToolService,
+                                                    Retriever<TextSegment> retriever) {
         return AiServices.builder(ReservationSupportAgent.class)
                 .chatLanguageModel(chatLanguageModel)
                 .chatMemory(MessageWindowChatMemory.withMaxMessages(20))

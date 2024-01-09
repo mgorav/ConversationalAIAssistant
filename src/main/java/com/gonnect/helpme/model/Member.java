@@ -1,4 +1,4 @@
-package com.gonnect.helpme.helpme.model;
+package com.gonnect.helpme.model;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

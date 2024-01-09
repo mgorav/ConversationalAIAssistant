@@ -1,7 +1,7 @@
-package com.gonnect.helpme.helpme.service;
+package com.gonnect.helpme.service;
 
-import com.gonnect.helpme.helpme.model.Reservation;
-import com.gonnect.helpme.helpme.repository.ReservationRepository;
+import com.gonnect.helpme.model.Reservation;
+import com.gonnect.helpme.repository.ReservationRepository;
 import dev.langchain4j.agent.tool.Tool;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

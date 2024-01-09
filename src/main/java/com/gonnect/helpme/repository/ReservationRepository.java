@@ -1,9 +1,9 @@
-package com.gonnect.helpme.helpme.repository;
+package com.gonnect.helpme.repository;
 
-import com.gonnect.helpme.helpme.exception.ReservationCannotBeCancelledException;
-import com.gonnect.helpme.helpme.exception.ReservationNotFoundException;
-import com.gonnect.helpme.helpme.model.Reservation;
-import com.gonnect.helpme.helpme.model.Member;
+import com.gonnect.helpme.exception.ReservationCannotBeCancelledException;
+import com.gonnect.helpme.exception.ReservationNotFoundException;
+import com.gonnect.helpme.model.Reservation;
+import com.gonnect.helpme.model.Member;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDate;

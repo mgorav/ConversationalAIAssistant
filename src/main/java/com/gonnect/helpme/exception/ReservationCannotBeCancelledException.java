@@ -1,4 +1,4 @@
-package com.gonnect.helpme.helpme.exception;
+package com.gonnect.helpme.exception;
 
 public class ReservationCannotBeCancelledException extends RuntimeException {
 

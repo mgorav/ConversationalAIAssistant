@@ -1,4 +1,4 @@
-package com.gonnect.helpme.helpme;
+package com.gonnect.helpme;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;

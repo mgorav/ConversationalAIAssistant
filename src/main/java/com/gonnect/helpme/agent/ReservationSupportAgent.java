@@ -1,4 +1,4 @@
-package com.gonnect.helpme.helpme.agent;
+package com.gonnect.helpme.agent;
 
 import dev.langchain4j.service.SystemMessage;
 

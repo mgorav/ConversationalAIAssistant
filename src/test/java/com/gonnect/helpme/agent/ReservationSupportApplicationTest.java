@@ -1,4 +1,4 @@
-package com.gonnect.helpme.helpme.agent;
+package com.gonnect.helpme.agent;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
