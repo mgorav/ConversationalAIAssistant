@@ -482,19 +482,6 @@ sequenceDiagram
     ReservationSupportAgent-->>-ReservationSupportApplicationTest: Explains cannot cancel  
 ```
 
-Exercises full system workflow in test case.
-
-So in summary, the updated readme.md contains additional details around:
-
-- Expanded capabilities
-- Key research priorities
-- Architecture explanation
-- Component descriptions
-- Class and sequence diagrams
-- Test coverage
-
-To enable quickly understanding the overall solution design and approach.
-
 ## Running Tests
 
 To run the test cases, use:
