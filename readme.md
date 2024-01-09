@@ -2,7 +2,7 @@
 
 ## What
 
-An AI-powered conversational agent for handling customer inquiries for a fictional car rental company "Miles of Gonnect".
+An AI-powered conversational agent for handling customer inquiries for a fictional car rental company "Miles of Connect".
 
 Built using:
 
@@ -11,35 +11,50 @@ Built using:
 - OpenAI for language capabilities
 - In-memory data store
 
+### Enhanced capabilities
+
+In addition to the base capabilities, the assistant could be extended to provide:
+
+- Personalized recommendations based on customer history and preferences
+- Integration with real-time inventory and pricing data
+- Support for taking payments to complete reservations
+- Connection to CRM systems to track all customer interactions
+
 ## Why
 
 Enable customers to intuitively:
 
 - Lookup reservations
 - Reschedule/cancel reservations
-- Get questions answered
+- Get questions answered related to rental policies, vehicle types, pricing
 
-Without needing a human agent.
+Without needing a human agent. This improves efficiency and lowers costs.
+
+Key benefits:
+
+- 24/7 availability for customer self-service
+- Reduce call center volume
+- Lower operational expenses
+- Improve customer experience with instant answers
 
 > ## [Further Research](Further_Research.md)
-> While usable for basic queries, improvements in several areas could enable more advanced functionality:
 >
-> ### Embeddings
+> ### Priority areas for enhancement:
 >
-> Employing learned semantic models over raw text for better understanding.
-> 
-> ### Dialog Management
-> 
-> Managing long, complex conversations with state tracking.
-> 
-> ### Personalization
-> 
-> Incorporating user preferences and history for suggestions.
-> 
-> ### Trust and Safety
-> 
-> Protecting sensitive customer information.
+> #### Embeddings
+> Employ learned semantic models over raw text for improved understanding across domains.
 >
+> #### Dialog Management
+> Manage long, complex conversations with state tracking across sessions.
+>
+> #### Personalization
+> Incorporate user preferences and history for individualized suggestions and recommendations.
+>
+> #### Trust and Safety
+> Protect sensitive customer information in conversations.
+>
+> #### Integration
+> Connect to backend systems for real-time data and workflow completion.
 
 ## How
 
@@ -57,17 +72,16 @@ LangChain4j is the Java port of LangChain - a library for quickly assembling sop
 
 ### Key Concepts
 
-```mermaid 
+```mermaid
 graph TB;
     A[Agent Interface] --> B(LangChain Agent);
     B --> C[Language Model];
     B --> D[Tools];
     B --> E[Memory];
-    B --> F[Retrievers];
-    
+    B --> F[Retrievers];  
 ```
 
-- **Agent Interface** - Defines capabilities like chat()
+- **Agent Interface** - Defines capabilities like `chat()`
 - **LangChain Agent** - Production wrapper integrating all components
 - **Language Model** - Provides NLU and NLG (ex. OpenAI)
 - **Tools** - App logic exposed for workflow automation
@@ -87,11 +101,11 @@ With just Java code. Enables rapid development of capable assistants.
 
 ### Architecture
 
-```mermaid
+```mermaid  
 sequenceDiagram
     autonumber
     participant User
-    participant Controller
+    participant Controller 
     participant Agent
     participant Tools
     participant Memory
@@ -99,25 +113,25 @@ sequenceDiagram
     participant Model
 
     activate User
-    User ->> Controller: Chat request
+    User ->> Controller: Chat request  
     activate Controller
 
     Controller ->> Agent: chat()
     activate Agent
 
-    Agent ->> Tools: getReservationDetails()
+    Agent ->> Tools: getReservationDetails() 
     activate Tools
-    Tools -->> Agent: Reservation details
+    Tools -->> Agent: Reservation details  
     deactivate Tools
 
     Agent ->> Memory: updateContext()
-    activate Memory
+    activate Memory 
     Memory -->> Agent: Context updated
     deactivate Memory
 
     Agent ->> Retriever: lookupInformation()
     activate Retriever
-    Retriever -->> Agent: Relevant information
+    Retriever -->> Agent: Relevant information  
     deactivate Retriever
 
     Agent ->> Model: generateText()
@@ -125,11 +139,11 @@ sequenceDiagram
     Model -->> Agent: Text response
     deactivate Model
 
-    Agent -->> Controller: Response
+    Agent -->> Controller: Response  
     deactivate Agent
 
     Controller -->> User: Chat response
-    deactivate Controller
+    deactivate Controller 
     deactivate User
 ```
 
@@ -139,157 +153,167 @@ Agent coordinates all other components.
 
 #### Detailed explanation
 
-Below is a more detailed explanation of the architecture sequence diagram using my knowledge of LangChain:
+Below is a more detailed explanation of the architecture sequence diagram using knowledge about LangChain:
 
-1. The user sends a message to the Controller endpoint. This could be via a REST API or UI.
+1. User sends message to Controller endpoint via REST API or UI.
 
-2. The Controller calls the `chat()` method on the ReservationSupportAgent. This is the main LangChain agent that will handle the conversation.
+2. Controller calls `chat()` on ReservationSupportAgent - main LangChain agent.
 
-3. The Agent leverages the @Tool annotation to call a method on the ReservationToolService. This allows integrating custom business logic into the conversation flow.
+3. Agent calls `getReservationDetails()` tool method to integrate custom business logic.
 
-4. The ReservationToolService queries the back-end ReservationRepository to lookup reservation details and returns them.
+4. ReservationToolService queries ReservationRepository to lookup booking details.
 
-5. The Agent updates the dialog state using the MessageWindowChatMemory. This Memory implementation stores the conversation history in a sliding window to provide context.
+5. Agent stores conversation history in Memory to preserve dialog context.
 
-6. The Agent calls the lookupInformation() method on the EmbeddingStoreRetriever. This searches over vector embeddings of documents to find relevant sections.
+6. Agent calls Retriever to match question to indexed documents.
 
-7. The Retriever returns any matching passages from the indexed documents to the Agent. This powers the ability to lookup information.
+7. Retriever returns relevant passages from embedding store.
 
-8. The Agent constructs a prompt with the user message, retrieved passages, and dialog history. It passes this to the OpenAI language model to generate a response.
+8. Agent constructs prompt with user message, retrieved passages, history.
 
-9. The language model returns the generated response text back to the Agent.
+9. Model generates text response to prompt.
 
-10. The Agent returns the text to the Controller endpoint.
+10. Agent returns response text to Controller.
 
-11. The Controller formats and sends the final response to the User.
+11. Controller formats and responds to User.
 
-So in short, the Agent orchestrates calling business logic, updating state, retrieving information, generating text, and returning the response. The modular design allows customizing each component by binding different implementations. LangChain handles the coordination and workflow automation using the agent interface.
+So Agent orchestrates all components behind interface using LangChain to enable rapid development. Customizing implementations allows configuring behavior.
 
 ### Implementation
 
 Here is an explanation of the key Java implementation classes:
 
-| Class | Explanation |
-|-|-|
-| ReservationSupportAgent | Interface defining the `chat()` method that handles conversing with users. |
-| ReservationToolService | Contains business logic exposed via @Tool methods like getting reservation details and canceling bookings. |
-| ReservationRepository | Fake repository that imitates looking up and canceling reservations with hard-coded data. |  
-| Reservation | Simple POJO representing a booking. |
-| Member | Simple POJO representing a customer. |
-| ReservationHelpMeApplicationConfigurer | Configures LangChain agent, memory, tools, etc. |
-| ReservationCannotBeCancelledException | Custom exception thrown when a reservation cannot be canceled. |
-| ReservationNotFoundException | Custom exception thrown when a reservation is not found. |
+Here is the updated class table with classifications for each component:
 
-The ReservationSupportAgent provides the interface for chatting, which delegates to the LangChain agent behind the scenes.
+| Class                                  | Explanation | Classification |
+|----------------------------------------|-|-|
+| ReservationSupportAgent                | Interface defining `chat()` method to handle conversing. | **Agent Interface** |   
+| ReservationToolService                 | Contains business logic exposed via @Tool annotations. | **Tools** |
+| ReservationRepository                  | Fake repository simulating lookup and mutations. | **Backend Logic** |
+| Reservation                            | Simple POJO representing a booking. | **Model** |
+| Member                                 | Simple POJO representing a customer. | **Model** |
+| ReservationHelpMeApplicationConfigurer | Configures LangChain components like memory, tools. | **Configuration** |
+| ReservationCannotBeCancelledException  | Custom exception for domain errors. | **Custom Exception** |
+| ReservationNotFoundException           | Custom exception for domain errors. | **Custom Exception** | 
+| *ReservationChatUI                     | Web UI for chatting with the agent | **User Interface** |
 
-The ReservationToolService contains the key business logic for reservation operations, exposed via @Tool annotations.
+- **Backend Logic**: Handles integrating with backend systems
+- **Model**: Domain entity representing core data
+- **Configuration**: Wires up framework components
+- **Custom Exception**: App-specific error scenarios
+- **User Interface**: Interacts with end user  (ReservationChatUI - future extensions)
 
-The ReservationRepository acts as a fake data layer, simulating looking up and mutating reservations.
+Let me know if you need any other classifications or have additional components to add! I can update the table further.
 
-Reservation and Member are simple models representing bookings and customers.
+The ReservationSupportAgent provides the interface for chatting delegated to the agent.
 
-The ReservationHelpMeApplicationConfigurer wires up all the LangChain components like memory, tools, embedding store, etc.
+The ReservationToolService contains key use cases exposed as @Tool methods.
 
-The custom exception classes represent domain-specific error scenarios.
+The ReservationRepository acts as a fake data layer to simulate backends.
 
+Reservation and Member are models representing bookings and customers.
+
+The ReservationHelpMeApplicationConfigurer handles wiring up LangChain framework.
+
+Custom exceptions represent app-specific error scenarios.
 
 ## Conversational Agent
 
-Key Java modules:
+Additional Java modules:
 
 ### Configuration
 
 **ReservationHelpMeApplicationConfigurer**
 
-Sets up core framework:
+Handles configuring core framework:
 
 - OpenAI credentials
-- Chat model
+- Chat model selection
 - Memory, tools, etc
 
-Registers agent, services.
+Registers agent beans, services.
 
 ### Embedding Store
 
-In-memory store indexes policies for fast retrieval to answer questions.
+In-memory vector store for quickly retrieving relevant information to answer questions.
 
-Key steps:
+Automated ingestion pipeline:
 
-1. Load documents
+1. Load unstructured documents
 2. Split into segments
-3. Convert text into vector embeddings
-4. Save vectors to search over
+3. Generate vector embeddings
+4. Index vectors for search
 
-All automated by `EmbeddingStoreIngestor`.
+Controlled by `EmbeddingStoreIngestor`.
 
 ### Business Logic
 
 **ReservationToolService**
 
-Implements use cases like reservation lookup and cancellation using a mock repository.
+Implements key use cases using mock repository:
 
-@Tool annotations expose methods directly to agent.
+- Lookup reservation details
+- Cancel existing reservation
+
+@Tool methods directly usable by agent.
 
 ### Agent Interface
 
 **ReservationSupportAgent**
 
-LangChain interface defining capabilities like:
+LangChain interface defining chat capabilities:
 
-```java 
-String chat(String message)
+```java
+String chat(String message)  
 ```
 
 ### Execution Flow
 
 ```mermaid
 sequenceDiagram
-    autonumber
     participant Controller
-    participant Agent
+    participant Agent 
     participant Tools
 
     Controller -> Agent: chat()
 
-    Agent -> Tools: Lookup reservation
+    Agent -> Tools: Lookup reservation  
     Tools --> Agent: Reservation
 
-    Agent -> Memory: Update dialog state
+    Agent -> Memory: Update dialog state   
 
     Agent -> Retriever: Match question
-    Retriever --> Agent: Relevant sections
+    Retriever --> Agent: Relevant sections  
 
     Agent -> Model: Generate response
     Model --> Agent: Text
 
-    Agent --> Controller: Reply
+    Agent --> Controller: Reply   
 ```
 
-Key points:
+Orchestration points:
 
-- Agent coordinates components behind interface
-- Memory preserves dialog context
-- Tools enable workflow automation
-- Retriever matches questions to answers
-
+- Agent coordinates components
+- Memory preserves context
+- Tools enable automation
+- Retriever provides answers
 
 ### Key Libraries
 
-| Library | Purpose |  
+| Library | Purpose |    
 |-|-|
-| langchain4j-spring-boot-starter | LangChain & OpenAI integration|   
-| langchain4j | Core framework |
-| langchain4j-embeddings-* | Vector indexing |
-
+| langchain4j-spring-boot-starter | Integration with LangChain & OpenAI |    
+| langchain4j | Core framework |  
+| langchain4j-embeddings-* | Vector indexing pipeline |   
 
 
 ## Solution Design
 
-Key Java components from a design perspective:
+Additional Java components from a design perspective:
 
 ### Class Diagram
 
-```mermaid
+```mermaid  
 classDiagram
 
     class AgentInterface {
@@ -303,12 +327,12 @@ classDiagram
 
     class LanguageModel {
         +understand()
-        +generate()
+        +generate() 
     }
 
     class ReservationToolService {
         +getReservationDetails()
-        +cancelReservation()
+        +cancelReservation()  
     }
     ReservationToolService : Tool
 
@@ -320,65 +344,62 @@ classDiagram
         +lookupInformation()
     }
 
-    AgentInterface <|-- LangChainAgent
+    AgentInterface <|-- LangChainAgent  
     LangChainAgent *-- LanguageModel
-    LangChainAgent o-- ReservationToolService
+    LangChainAgent o-- ReservationToolService 
     LangChainAgent *-- MessageWindowChatMemory
-    LangChainAgent o-- EmbeddingStoreRetriever
+    LangChainAgent o-- EmbeddingStoreRetriever   
 ```
 
-Here is a brief explanation:
+Design explanation:
 
-- The ReservationToolService class is annotated as a **Tool** in the architecture. This means it exposes business logic methods for workflow automation.
+- ReservationToolService exposes workflow methods.
+- Annotated as Tool to integrate into agent.
+- Implements business logic for domain entities.
+- Methods flagged with @Tool indicator.
+- Agent utilizes Tool methods for app actions.
+- Abstracts backend implementation details.
+- Swapping Tools enables reuse of same Agent.
+- Allows configurable conversational flows.
 
-- In LangChain, **Tools** allow integrating custom application code into the conversational agent.
+### Sequence Diagram (Test Case)
 
-- They are Plain Old Java Objects (POJOs) that contain relevant business logic for the domain.
+Interaction flow in integration test:
 
-- Methods are annotated with @Tool to indicate they can be called directly by the Agent.
-
-- For example, the ReservationToolService has methods to:
-
-    - Lookup reservation details (@Tool getReservationDetails)
-
-    - Cancel an existing reservation (@Tool cancelReservation)
-
-- The Agent leverages these Tool methods to execute app-specific actions during a conversation.
-
-- Tools abstract the backend implementation from the Agent.
-
-- Swapping a different Tool service allows reusing the same Agent with alternate business logic.
-
-- This enables modular and configurable conversational flows.
-
-
-### Sequence Diagram (Integration Test)
-
-Interaction flow in the test case:
-
-```mermaid 
+```mermaid
 sequenceDiagram
     participant ReservationSupportApplicationTest
-    participant ReservationSupportAgent
+    participant ReservationSupportAgent  
     participant ReservationToolService
     participant ReservationRepository
 
-    ReservationSupportApplicationTest->>+ReservationSupportAgent: Hi, I forgot when <br>my reservation is.
-    ReservationSupportAgent->>+ReservationToolService: Get reservation details
+    ReservationSupportApplicationTest->>+ReservationSupportAgent: Hi, I forgot when <br>my reservation is.  
+    ReservationSupportAgent->>+ReservationToolService: Get reservation details  
     ReservationToolService->>+ReservationRepository: Lookup
     ReservationRepository-->>-ReservationToolService: Reservation
     ReservationToolService-->>-ReservationSupportAgent: Reservation details
-    ReservationSupportAgent-->>-ReservationSupportApplicationTest: Provides details
+    ReservationSupportAgent-->>-ReservationSupportApplicationTest: Provides details   
 
     ReservationSupportApplicationTest->>+ReservationSupportAgent: Can I cancel my reservation?
-    ReservationSupportAgent->>+ReservationToolService: Cancel reservation
+    ReservationSupportAgent->>+ReservationToolService: Cancel reservation  
     ReservationToolService->>+ReservationRepository: Cancel
     ReservationRepository-->>-ReservationToolService: Error
     ReservationToolService-->>-ReservationSupportAgent: Exception
-    ReservationSupportAgent-->>-ReservationSupportApplicationTest: Explains cannot cancel
-```  
+    ReservationSupportAgent-->>-ReservationSupportApplicationTest: Explains cannot cancel  
+```
 
-Shows how test exercises agent and backend workflow.
+Exercises full system workflow in test case.
+
+So in summary, the updated readme.md contains additional details around:
+
+- Expanded capabilities
+- Key research priorities
+- Architecture explanation
+- Component descriptions
+- Class and sequence diagrams
+- Test coverage
+
+To enable quickly understanding the overall solution design and approach.
 
 ## Running Tests
 
