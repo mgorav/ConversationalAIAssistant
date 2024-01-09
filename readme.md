@@ -167,14 +167,31 @@ So in short, the Agent orchestrates calling business logic, updating state, retr
 
 ### Implementation
 
-See code for:
+Here is an explanation of the key Java implementation classes:
 
-- Configuration
-- Business logic integration
-- REST API
-- Prompt engineering
+| Class | Explanation |
+|-|-|
+| ReservationSupportAgent | Interface defining the `chat()` method that handles conversing with users. |
+| ReservationToolService | Contains business logic exposed via @Tool methods like getting reservation details and canceling bookings. |
+| ReservationRepository | Fake repository that imitates looking up and canceling reservations with hard-coded data. |  
+| Reservation | Simple POJO representing a booking. |
+| Member | Simple POJO representing a customer. |
+| ReservationHelpMeApplicationConfigurer | Configures LangChain agent, memory, tools, etc. |
+| ReservationCannotBeCancelledException | Custom exception thrown when a reservation cannot be canceled. |
+| ReservationNotFoundException | Custom exception thrown when a reservation is not found. |
 
-Here is a more detailed overview focused specifically on the Java components:
+The ReservationSupportAgent provides the interface for chatting, which delegates to the LangChain agent behind the scenes.
+
+The ReservationToolService contains the key business logic for reservation operations, exposed via @Tool annotations.
+
+The ReservationRepository acts as a fake data layer, simulating looking up and mutating reservations.
+
+Reservation and Member are simple models representing bookings and customers.
+
+The ReservationHelpMeApplicationConfigurer wires up all the LangChain components like memory, tools, embedding store, etc.
+
+The custom exception classes represent domain-specific error scenarios.
+
 
 ## Conversational Agent
 
