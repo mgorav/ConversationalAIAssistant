@@ -137,6 +137,34 @@ The controller gets requests, delegates to Agent.
 
 Agent coordinates all other components.
 
+#### Detailed explanation
+
+Below is a more detailed explanation of the architecture sequence diagram using my knowledge of LangChain:
+
+1. The user sends a message to the Controller endpoint. This could be via a REST API or UI.
+
+2. The Controller calls the `chat()` method on the ReservationSupportAgent. This is the main LangChain agent that will handle the conversation.
+
+3. The Agent leverages the @Tool annotation to call a method on the ReservationToolService. This allows integrating custom business logic into the conversation flow.
+
+4. The ReservationToolService queries the back-end ReservationRepository to lookup reservation details and returns them.
+
+5. The Agent updates the dialog state using the MessageWindowChatMemory. This Memory implementation stores the conversation history in a sliding window to provide context.
+
+6. The Agent calls the lookupInformation() method on the EmbeddingStoreRetriever. This searches over vector embeddings of documents to find relevant sections.
+
+7. The Retriever returns any matching passages from the indexed documents to the Agent. This powers the ability to lookup information.
+
+8. The Agent constructs a prompt with the user message, retrieved passages, and dialog history. It passes this to the OpenAI language model to generate a response.
+
+9. The language model returns the generated response text back to the Agent.
+
+10. The Agent returns the text to the Controller endpoint.
+
+11. The Controller formats and sends the final response to the User.
+
+So in short, the Agent orchestrates calling business logic, updating state, retrieving information, generating text, and returning the response. The modular design allows customizing each component by binding different implementations. LangChain handles the coordination and workflow automation using the agent interface.
+
 ### Implementation
 
 See code for:
@@ -247,13 +275,25 @@ Key Java components from a design perspective:
 ```mermaid
 classDiagram
 
-    Agent <|-- ReservationSupportAgent
-    ReservationSupportAgent : +chat()
+    class AgentInterface {
+        <<interface>>
+        +chat()
+    }
+
+    class LangChainAgent {
+        -integrateComponents()
+    }
+
+    class LanguageModel {
+        +understand()
+        +generate()
+    }
 
     class ReservationToolService {
         +getReservationDetails()
         +cancelReservation()
     }
+    ReservationToolService : Tool
 
     class MessageWindowChatMemory {
         +updateContext()
@@ -262,9 +302,38 @@ classDiagram
     class EmbeddingStoreRetriever {
         +lookupInformation()
     }
+
+    AgentInterface <|-- LangChainAgent
+    LangChainAgent *-- LanguageModel
+    LangChainAgent o-- ReservationToolService
+    LangChainAgent *-- MessageWindowChatMemory
+    LangChainAgent o-- EmbeddingStoreRetriever
 ```
 
-Highlights key interfaces and relationships.
+Here is a brief explanation:
+
+- The ReservationToolService class is annotated as a **Tool** in the architecture. This means it exposes business logic methods for workflow automation.
+
+- In LangChain, **Tools** allow integrating custom application code into the conversational agent.
+
+- They are Plain Old Java Objects (POJOs) that contain relevant business logic for the domain.
+
+- Methods are annotated with @Tool to indicate they can be called directly by the Agent.
+
+- For example, the ReservationToolService has methods to:
+
+    - Lookup reservation details (@Tool getReservationDetails)
+
+    - Cancel an existing reservation (@Tool cancelReservation)
+
+- The Agent leverages these Tool methods to execute app-specific actions during a conversation.
+
+- Tools abstract the backend implementation from the Agent.
+
+- Swapping a different Tool service allows reusing the same Agent with alternate business logic.
+
+- This enables modular and configurable conversational flows.
+
 
 ### Sequence Diagram (Integration Test)
 
