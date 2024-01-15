@@ -37,7 +37,7 @@ Key benefits:
 - Lower operational expenses
 - Improve customer experience with instant answers
 
-> ## [Further Research](Further_Research.md)
+> ## [Further Research](docs/Further_Research.md)
 >
 > ### Priority areas for enhancement:
 >
@@ -55,6 +55,11 @@ Key benefits:
 >
 > #### Integration
 > Connect to backend systems for real-time data and workflow completion.
+
+## Reference Architecture
+
+The reference architecture diagram showing the components of the AI-driven assistant is available [here](docs%2Freference_arch.md)
+
 
 ## How
 
